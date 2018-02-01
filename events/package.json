@@ -1,0 +1,34 @@
+{
+  "name": "events_service",
+  "version": "1.0.0",
+  "description": "request handler for bookings and views",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aj-4/AirbnbBookingSystem.git"
+  },
+  "keywords": [
+    "events",
+    "requests",
+    "system",
+    "conversion",
+    "handler"
+  ],
+  "author": "Aaron Pietsch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aj-4/AirbnbBookingSystem/issues"
+  },
+  "homepage": "https://github.com/aj-4/AirbnbBookingSystem#readme",
+  "dependencies": {
+    "aws-sdk": "^2.188.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-cassandra": "^2.1.1",
+    "newrelic": "^2.6.1"
+  }
+}

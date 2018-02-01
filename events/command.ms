@@ -1,0 +1,1 @@
+docker run --name cass --net=host -d cassandra:3.11.1
