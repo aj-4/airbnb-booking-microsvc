@@ -19,21 +19,33 @@ app.get('/', (req, res) => res.send('Event Handler'));
 
 app.post('/pageview', (req, res) => {
   if (req.body.viewId && req.body.hostId) {
-    viewInsert(req.body.viewId, req.body.hostId);    
-    //send message to queue
-    res.status(200).send('Sent to queue');    
+    viewInsert(req.body.viewId, req.body.hostId)   
+    .saveAsync()
+      .then(function () {
+        console.log('inserted');
+        res.status(200).send('Sent to queue');
+      })
+      .catch(function () {
+        console.log('failed to insert');
+      })    
   } else {
     res.status(400).send('Send to queue failed');
   }
-
 });
 
 app.post('/booking', (req, res) => {
   if (req.body.bookId && req.body.hostId) {
-    addToBookingQueue(req.body.viewId, req.body.hostId);
-    res.status(200).send('Sent to queue');
+    bookInsert(req.body.viewId, req.body.hostId)
+    .saveAsync()
+      .then(function () {
+        console.log('inserted');
+        res.status(200).send('Sent to queue');
+      })
+      .catch(function () {
+        console.log('failed to insert');
+      })
   } else {
-    res.status(400).send('Send to queue failed');
+    res.status(400).send('Missing Params');
   }
 });
 
