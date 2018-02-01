@@ -25,30 +25,30 @@ var receiveMessageLoop = function() {
 
   sqs.receiveMessage(params, function (err, data) {
     if (err) {
-      setTimeout(receiveMessage, 1);
+      setTimeout(receiveMessage, 100);
     } else if (data.Messages) {
       console.log('message is: ', data.Messages[0]);
       insertView(data.Messages[0].MessageAttributes.ViewId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
-        .then(function() {
+      .saveAsync()
+        .then(function () {
           var deleteParams = {
             QueueUrl: queueURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle
           };
           sqs.deleteMessage(deleteParams, function (err, data) {
             if (err) {
-              console.log('Delete Error', err);
             } else {
-              console.log('Message Deleted', data);
-              receiveMessage();
+              setTimeout(receiveMessageLoop, 100);
             }
           });
         })
-        .catch(function() {
-          console.log('error in receivemessage');
-        }
-        );
+        .catch(function (err) {
+          console.log(err);
+        });
     }
   });
 };
+
+receiveMessageLoop();
 
 module.exports = receiveMessageLoop;

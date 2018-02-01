@@ -8,12 +8,12 @@ const viewInsert = require('../database/viewInsertion');
 //send to queues
 const addToBookingQueue = require('./book_queue/sqs_sendmessage');
 const addToViewQueue = require('./view_queue/sqs_sendmessage');
-// const addToViewQueue;
+
+const initCassandra = require('../database/indexCassandra');
 
 app.use(bodyParser.json());
 
 const PORT = 3000;
-const HOST = '54.67.38.89';
 
 app.get('/', (req, res) => res.send('Event Handler'));
 
