@@ -6,7 +6,7 @@
   "scripts": {
     "test": "test",
     "start": "node server/index.js",
-    "newrelic": "npm install newrelic --no-optional"
+    "newrelic": "npm install newrelic --no-optional --python=python2.7"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "aws-sdk": "^2.188.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "express-cassandra": "^2.1.1"
+    "express-cassandra": "^2.1.1",
+    "newrelic": "^2.7.0"
   }
 }
