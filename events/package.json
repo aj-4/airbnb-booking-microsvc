@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "nodemon server/index.js"
+    "start": "node server/index.js",
+    "newrelic": "npm install newrelic --no-optional"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,6 @@
     "aws-sdk": "^2.188.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "express-cassandra": "^2.1.1",
-    "newrelic": "^2.6.1"
+    "express-cassandra": "^2.1.1"
   }
 }
