@@ -23,7 +23,7 @@ var ViewEvent = models.loadSchema('viewevent', {
     host_id: 'text',
     created: 'timestamp'
   },
-  key: [['view_id', 'host_id'], 'created'],
+  key: [['host_id'], 'view_id', 'created'],
   clustering_order: { "created": "desc" }  
 });
 
@@ -33,7 +33,7 @@ var BookEvent = models.loadSchema('bookevent', {
     host_id: 'text',
     created: 'timestamp'
   },
-  key: [['booking_id', 'host_id'], 'created'],
+  key: [['host_id'], 'booking_id', 'created'],
   clustering_order: { "created": "desc" }
 });
 
