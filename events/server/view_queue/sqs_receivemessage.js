@@ -27,7 +27,6 @@ var receiveMessageLoop = function() {
     if (err) {
       setTimeout(receiveMessage, 100);
     } else if (data.Messages) {
-      console.log('message is: ', data.Messages[0]);
       insertView(data.Messages[0].MessageAttributes.ViewId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
       .saveAsync()
         .then(function () {

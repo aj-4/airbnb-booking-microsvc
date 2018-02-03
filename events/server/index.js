@@ -19,11 +19,10 @@ app.get('/', (req, res) => res.send('Event Handler'));
 
 app.post('/pageview', (req, res) => {
   if (req.body.viewId && req.body.hostId) {
-    viewInsert(req.body.viewId, req.body.hostId)   
+    viewInsert(req.body.viewId, req.body.hostId, req.body.time)   
     .saveAsync()
       .then(function () {
-        console.log('inserted');
-        res.status(200).send('Sent to queue');
+        res.status(200).send('Inserted');
       })
       .catch(function () {
         console.log('failed to insert');
@@ -35,14 +34,15 @@ app.post('/pageview', (req, res) => {
 
 app.post('/booking', (req, res) => {
   if (req.body.bookId && req.body.hostId) {
-    bookInsert(req.body.viewId, req.body.hostId)
+    console.log('inserting booking')
+    bookInsert(req.body.bookId, req.body.hostId, req.body.time)
     .saveAsync()
       .then(function () {
-        console.log('inserted');
-        res.status(200).send('Sent to queue');
+        res.status(200).send('Inserted');
       })
       .catch(function () {
         console.log('failed to insert');
+        res.status(400).send('failed to insert');
       })
   } else {
     res.status(400).send('Missing Params');
