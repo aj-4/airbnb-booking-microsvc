@@ -1,5 +1,5 @@
 //post function
-var insertBook = require('../../database/bookInsertion');
+var insertBook = require('../../../database/bookInsertion');
 
 //config
 var AWS = require('aws-sdk');
@@ -22,14 +22,12 @@ var receiveMessageLoop = function() {
     WaitTimeSeconds: 1
   };
 
-  sqs.receiveMessage(params, function (err, data) {
+  sqs.receiveMessage(params, async(err, data) => {
     if (err) {
       console.log('Receive Error', err);
     } else if (data.Messages) {
       console.log('message is: ', data.Messages[0]);
-      insertBook(data.Messages[0].MessageAttributes.BookingId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
-        .saveAsync()
-        .then(function () {
+      await insertBook(data.Messages[0].MessageAttributes.BookingId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue).saveAsync();
           var deleteParams = {
             QueueUrl: queueURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle
@@ -40,10 +38,6 @@ var receiveMessageLoop = function() {
               setTimeout(receiveMessageLoop, 100);
             }
           });
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
     }
   });
 };

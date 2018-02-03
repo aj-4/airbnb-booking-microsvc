@@ -1,5 +1,5 @@
 //post function
-var insertView = require('../../database/viewInsertion');
+var insertView = require('../../../database/viewInsertion');
 
 //config
 var AWS = require('aws-sdk');

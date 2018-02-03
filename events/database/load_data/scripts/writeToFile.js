@@ -17,10 +17,10 @@ var writeToStream = function(i, stream) {
             return;
         }
     }
-    console.log('finished file');
+    console.log('finished file');lsls
     stream.end();
     return;
 }
 
 var wr = fs.createWriteStream(path.resolve(__dirname, '../datafiles/bigFile.txt'));
-writeToStream(0, wr, 0);
+await writeToStream(0, wr, 0);
