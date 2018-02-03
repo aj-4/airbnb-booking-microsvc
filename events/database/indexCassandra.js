@@ -19,22 +19,22 @@ var models = ExpressCassandra.createClient({
 
 var ViewEvent = models.loadSchema('viewevent', {
   fields: {
-    id: 'uuid',
     view_id: 'text',
     host_id: 'text',
-    created: 'timeuuid'
+    created: 'timestamp'
   },
-  key: ['id']
+  key: [['view_id', 'host_id'], 'created'],
+  clustering_order: { "created": "desc" }  
 });
 
 var BookEvent = models.loadSchema('bookevent', {
   fields: {
-    id: 'uuid',
     booking_id: 'text',
     host_id: 'text',
-    created: 'timeuuid'
+    created: 'timestamp'
   },
-  key: ['id']
+  key: [['booking_id', 'host_id'], 'created'],
+  clustering_order: { "created": "desc" }
 });
 
 BookEvent.syncDB(function (err, result) {
