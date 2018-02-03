@@ -1,11 +1,10 @@
 var models = require('./indexCassandra');
 
-var addView = (viewId, hostId) => {
+var addView = (viewId, hostId, time) => {
   return new models.instance.viewevent({
-    id: models.uuid(),
     view_id: viewId,
     host_id: hostId,
-    created: models.timeuuid()
+    created: time
   });
 };
 

@@ -1,11 +1,10 @@
 var models = require('./indexCassandra');
 
-var addBooking = (bookingId, hostId) => {
+var addBooking = (bookingId, hostId, time) => {
   return new models.instance.bookevent({
-    id: models.uuid(),
     booking_id: bookingId,
     host_id: hostId,
-    created: models.timeuuid()
+    created: time
   })
 };
 
