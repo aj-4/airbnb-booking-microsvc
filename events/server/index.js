@@ -20,7 +20,7 @@ const PORT = 3000;
 
 app.get('/', (req, res) => res.send('Event Handler'));
 
-app.post('/pageview', async(req, res) => {
+app.post('/pageview', (req, res) => {
   if (req.body.viewId && req.body.hostId) {
     await db.addView(req.body.viewId, req.body.hostId, req.body.time).saveAsync();
     res.status(200).send('Inserted');

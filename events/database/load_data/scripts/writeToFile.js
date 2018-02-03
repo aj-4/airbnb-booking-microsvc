@@ -3,7 +3,7 @@ var faker = require('faker');
 var path = require('path');
 
 var writeToStream = function(i, stream) {
-    for (; i < 10000000; i++) {
+    for (; i < 2000000; i++) {
         var bookId = String(Math.floor(Math.random() * 10000000000));
         var hostId = String(Math.floor(Math.random() * 10000));
         var date = faker.date.between('2011-01-01', '2017-12-31');
