@@ -1,0 +1,16 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 60
+      arrivalRate: 90
+  processor: "./my-functions.js"
+scenarios:
+  - flow:
+    - function: "generateData"
+    - post:
+        url: "/booking"
+        json:
+            bookId: "{{ bookId }}"
+            hostId: "{{ hostId }}"
+      # Print the data we're sending while debugging the script:
+    - log: "Sent a request to /booking with {{ name }}, {{ email }}, {{ password }}"
