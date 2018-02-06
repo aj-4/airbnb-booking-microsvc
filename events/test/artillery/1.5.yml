@@ -1,0 +1,17 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 120
+      arrivalRate: 60
+  processor: "./my-functions.js"
+scenarios:
+  - flow:
+    - loop: 
+      - function: "generateData"
+      - post:
+          url: "/booking"
+          json:
+              listingId: "{{ listingId }}"
+              hostId: "{{ hostId }}"
+          order: "sequence"
+      count: 2
