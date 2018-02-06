@@ -18,32 +18,40 @@ var params = {
   ],
   QueueUrl: queueURL,
   VisibilityTimeout: 0,
-  WaitTimeSeconds: 1
+  WaitTimeSeconds: 10
 };
 
 var receiveMessageLoop = function() {
 
-  sqs.receiveMessage(params, function (err, data) {
+  // console.log('loop beginning');
+  sqs.receiveMessage(params, async (err, data) => {
     if (err) {
-      setTimeout(receiveMessage, 100);
+      console.log('error receiving message...')
     } else if (data.Messages) {
-      insertView(data.Messages[0].MessageAttributes.ViewId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
+      console.log('got message: 📧');
+      insertView(data.Messages[0].MessageAttributes.ListingId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
       .saveAsync()
         .then(function () {
+          console.log('inserted to db ⛩');
           var deleteParams = {
             QueueUrl: queueURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle
           };
           sqs.deleteMessage(deleteParams, function (err, data) {
             if (err) {
+              console.log('could not delete msg');
             } else {
-              setTimeout(receiveMessageLoop, 100);
+              console.log('waiting for next message...');
+              setTimeout(receiveMessageLoop, 1000);
             }
           });
         })
         .catch(function (err) {
-          console.log(err);
+          console.log('error in receive msg')
         });
+    } else {
+      console.log('none found, waiting... 💀');
+      setTimeout(receiveMessageLoop, 1000);
     }
   });
 };

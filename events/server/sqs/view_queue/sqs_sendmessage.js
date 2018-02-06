@@ -5,13 +5,13 @@ var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 var params = {};
 
-var sendMsg = function(viewId, hostId) {
+var sendMsg = function(listingId, hostId) {
   var params = {
-    DelaySeconds: 1,
+    DelaySeconds: 0,
     MessageAttributes: {
-      'ViewId': {
+      'ListingId': {
         DataType: 'String',
-        StringValue: viewId
+        StringValue: listingId
       },
       'HostId': {
         DataType: 'String',
@@ -25,9 +25,11 @@ var sendMsg = function(viewId, hostId) {
     if (err) {
       console.log('Error', err);
     } else {
-      console.log('Added to Queue, Id: ', data.MessageId);
+      // console.log('Added to Queue, Id: ', data.MessageId);
+      console.log('sent msg ☄ ' + listingId);
     }
   });
 };
+
 
 module.exports = sendMsg;

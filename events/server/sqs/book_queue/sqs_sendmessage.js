@@ -5,18 +5,22 @@ var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 var params = {};
 
-var sendMsg = function(bookingId, hostId) {
+var sendMsg = function(hostId, listingId) {
   var params = {
     DelaySeconds: 1,
     MessageAttributes: {
-      'BookingId': {
-        DataType: 'String',
-        StringValue: bookingId
-      },
       'HostId': {
         DataType: 'String',
         StringValue: hostId
-      }
+      },
+      'ListingId': {
+        DataType: 'String',
+        StringValue: listingId
+      },
+      // 'SuperhostStatus' : {
+      //   DataType: 'String',
+      //   StringValue: hostId
+      // }
     },
     MessageBody: 'Booking',
     QueueUrl: 'https://sqs.us-west-1.amazonaws.com/608151570921/bookingQ'

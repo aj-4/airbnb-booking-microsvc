@@ -27,7 +27,7 @@ var receiveMessageLoop = function() {
       console.log('Receive Error', err);
     } else if (data.Messages) {
       console.log('message is: ', data.Messages[0]);
-      await insertBook(data.Messages[0].MessageAttributes.BookingId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue).saveAsync();
+      await insertBook(data.Messages[0].MessageAttributes.HostId.StringValue, data.Messages[0].MessageAttributes.ListingId.StringValue).saveAsync();
           var deleteParams = {
             QueueUrl: queueURL,
             ReceiptHandle: data.Messages[0].ReceiptHandle
