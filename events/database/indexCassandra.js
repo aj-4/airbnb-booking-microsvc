@@ -10,8 +10,8 @@ var models = ExpressCassandra.createClient({
   },
   ormOptions: {
     defaultReplicationStrategy: {
-      class: 'SimpleStrategy',
-      replication_factor: 1
+      class: 'NetworkTopologyStrategy',
+      datacenter1: 2
     },
     migration: 'safe',
   }
@@ -19,23 +19,33 @@ var models = ExpressCassandra.createClient({
 
 var ViewEvent = models.loadSchema('viewevent', {
   fields: {
-    view_id: 'text',
+    view_id: 'uuid',
     host_id: 'text',
-    created: 'timestamp'
+    listing_id: 'text',
+    date: 'text',
+    time: 'timestamp',
+    superhost: 'boolean'
   },
-  key: [['host_id'], 'view_id', 'created'],
-  clustering_order: { "created": "desc" }  
+  key: [['host_id', 'date'], 'time'],
+  clustering_order: { "time": "desc" }
 });
 
 var BookEvent = models.loadSchema('bookevent', {
   fields: {
-    booking_id: 'text',
+    booking_id: 'uuid',
     host_id: 'text',
-    created: 'timestamp'
+    listing_id: 'text',
+    date: 'text',
+    time: 'timestamp',
+    superhost: 'boolean'
   },
-  key: [['host_id'], 'booking_id', 'created'],
-  clustering_order: { "created": "desc" }
+  // query changes to get bookings by host by day
+  // enter DATE as simple 2000-01-01 string
+  key: [['host_id', 'date'], 'time'],
+  clustering_order: { "time": "desc" }
 });
+
+// key: [['host_id'], 'booking_id', 'created'],
 
 BookEvent.syncDB(function (err, result) {
   if (err) { throw err; }
