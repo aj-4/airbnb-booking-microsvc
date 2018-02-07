@@ -4,6 +4,7 @@ AWS.config.update({ region: 'us-west-1' });
 var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 var params = {};
+var counter = 0;
 
 var sendMsg = function(listingId, hostId) {
   var params = {
@@ -26,7 +27,7 @@ var sendMsg = function(listingId, hostId) {
       console.log('Error', err);
     } else {
       // console.log('Added to Queue, Id: ', data.MessageId);
-      console.log('sent msg ☄ ' + listingId);
+      console.log('sent msg ☄ ', ++counter);
     }
   });
 };

@@ -1,6 +1,6 @@
 var send = require('./sqs_sendmessage');
 
-var viewIndex = 0;
+var counter = 0;
 
 setInterval(e => {
     send(
@@ -8,5 +8,5 @@ setInterval(e => {
         //host id
         String(Math.floor(Math.random() * 10000)))}, 
         //interval
-        2000
+        0
 );

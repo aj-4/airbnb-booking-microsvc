@@ -1,3 +1,4 @@
+const newrelic = require('newrelic');
 //post function
 var insertView = require('../../../database/viewInsertion');
 
@@ -12,46 +13,48 @@ var params = {
   AttributeNames: [
     'SentTimestamp'
   ],
-  MaxNumberOfMessages: 1,
+  MaxNumberOfMessages: 10,
   MessageAttributeNames: [
     'All'
   ],
   QueueUrl: queueURL,
-  VisibilityTimeout: 0,
+  VisibilityTimeout: 60,
   WaitTimeSeconds: 10
 };
 
-var receiveMessageLoop = function() {
+var counter = 0;
 
-  // console.log('loop beginning');
+var receiveMessageLoop = function() {
   sqs.receiveMessage(params, async (err, data) => {
     if (err) {
       console.log('error receiving message...')
     } else if (data.Messages) {
-      console.log('got message: 📧');
-      insertView(data.Messages[0].MessageAttributes.ListingId.StringValue, data.Messages[0].MessageAttributes.HostId.StringValue)
-      .saveAsync()
-        .then(function () {
-          console.log('inserted to db ⛩');
-          var deleteParams = {
-            QueueUrl: queueURL,
-            ReceiptHandle: data.Messages[0].ReceiptHandle
-          };
-          sqs.deleteMessage(deleteParams, function (err, data) {
-            if (err) {
-              console.log('could not delete msg');
-            } else {
-              console.log('waiting for next message...');
-              setTimeout(receiveMessageLoop, 1000);
-            }
-          });
-        })
-        .catch(function (err) {
-          console.log('error in receive msg')
-        });
+      console.time('process batch')
+      var deleteParams = {
+        Entries: [],
+        QueueUrl: queueURL
+      };  
+      console.log('inserting ✉ ', counter += data.Messages.length);
+      //array of db promises
+      var dbreqs = [];
+      data.Messages.forEach((msg, i) => {
+          deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
+          dbreqs.push(insertView(msg.MessageAttributes.ListingId.StringValue, msg.MessageAttributes.HostId.StringValue).saveAsync());
+      });  
+      await Promise.all(dbreqs);
+      console.timeEnd('process batch');
+      console.time('delete batch');
+      sqs.deleteMessageBatch(deleteParams, function (err, data) {
+        if (err) {
+          console.log(err, err.stack);
+        } else {
+          console.timeEnd('delete batch');          
+          receiveMessageLoop();
+        }
+      });  
     } else {
-      console.log('none found, waiting... 💀');
-      setTimeout(receiveMessageLoop, 1000);
+      console.log('none found, waiting...');
+      receiveMessageLoop();
     }
   });
 };
