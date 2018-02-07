@@ -1,9 +1,9 @@
 config:
   target: 'http://localhost:3000'
   phases:
-    - duration: 120
-      arrivalRate: 60
-  processor: "./my-functions.js"
+    - duration: 300
+      arrivalRate: 1
+  processor: "../my-functions.js"
 scenarios:
   - flow:
     - loop: 
@@ -14,4 +14,4 @@ scenarios:
               listingId: "{{ listingId }}"
               hostId: "{{ hostId }}"
           order: "sequence"
-      count: 2
+      count: 10

@@ -3,7 +3,7 @@ config:
   phases:
     - duration: 60
       arrivalRate: 1
-  processor: "./my-functions.js"
+  processor: "../my-functions.js"
 scenarios:
   - flow:
     - loop: 
