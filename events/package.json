@@ -4,7 +4,7 @@
   "description": "request handler for bookings and views",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/mocha",
+    "test": "nyc --reporter=text mocha test/mocha",
     "start": "node server/index.js",
     "newrelic": "npm install newrelic --no-optional --python=python2.7"
   },
@@ -38,6 +38,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.0.0",
-    "nodemon": "^1.14.12"
+    "nodemon": "^1.14.12",
+    "nyc": "^11.4.1"
   }
 }
