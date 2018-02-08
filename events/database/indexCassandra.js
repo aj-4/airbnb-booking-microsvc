@@ -24,7 +24,6 @@ var ViewEvent = models.loadSchema('viewevent', {
     listing_id: 'text',
     date: 'text',
     time: 'timestamp',
-    superhost: 'boolean'
   },
   key: [['host_id', 'date'], 'time'],
   clustering_order: { "time": "desc" }
@@ -37,11 +36,38 @@ var BookEvent = models.loadSchema('bookevent', {
     listing_id: 'text',
     date: 'text',
     time: 'timestamp',
-    superhost: 'boolean'
   },
   // query changes to get bookings by host by day
   // enter DATE as simple 2000-01-01 string
   key: [['host_id', 'date'], 'time'],
+  clustering_order: { "time": "desc" }
+});
+
+var BookEventByDate = models.loadSchema('bookeventdate', {
+  fields: {
+    booking_id: 'uuid',
+    host_id: 'text',
+    listing_id: 'text',
+    date: 'text',
+    time: 'timestamp',
+  },
+  // query changes to get bookings by host by day
+  // enter DATE as simple 2000-01-01 string
+  key: [['date'], 'time'],
+  clustering_order: { "time": "desc" }
+});
+
+var ViewEventByDate = models.loadSchema('vieweventdate', {
+  fields: {
+    booking_id: 'uuid',
+    host_id: 'text',
+    listing_id: 'text',
+    date: 'text',
+    time: 'timestamp',
+  },
+  // query changes to get bookings by host by day
+  // enter DATE as simple 2000-01-01 string
+  key: [['date'], 'time'],
   clustering_order: { "time": "desc" }
 });
 
@@ -58,5 +84,13 @@ ViewEvent.syncDB(function (err, result) {
   // result == true if any database schema was updated
   // result == false if no schema change was detected in your models
 });
+
+BookEventByDate.syncDB(function (err, result) {
+  if (err) { throw err; }  
+})
+
+ViewEventByDate.syncDB(function (err, result) {
+  if (err) { throw err; }  
+})
 
 module.exports = models;
