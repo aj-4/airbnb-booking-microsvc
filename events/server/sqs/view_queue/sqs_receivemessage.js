@@ -1,4 +1,3 @@
-const newrelic = require('newrelic');
 //post function
 const insertView = require('../../../database/viewInsertion');
 
@@ -22,7 +21,7 @@ const params = {
   WaitTimeSeconds: 10
 };
 
-const counter = 0;
+let counter = 0;
 
 const receiveMessage = (cb) => {
   sqs.receiveMessage(params, async (err, data) => {
@@ -37,7 +36,7 @@ const receiveMessage = (cb) => {
       let promises = [];
       data.Messages.forEach((msg, i) => {
         deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
-        promises.push(insertView(msg.MessageAttributes.ListingId.StringValue, msg.MessageAttributes.HostId.StringValue).saveAsync());
+        promises.push(insertView(msg.MessageAttributes.HostId.StringValue, msg.MessageAttributes.ListingId.StringValue));
       });
       await Promise.all(promises);
       sqs.deleteMessageBatch(deleteParams, function (err, data) {
@@ -66,7 +65,7 @@ const receiveMessageLoop = () => {
       let dbreqs = [];
       data.Messages.forEach((msg, i) => {
           deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
-          dbreqs.push(insertView(msg.MessageAttributes.ListingId.StringValue, msg.MessageAttributes.HostId.StringValue).saveAsync());
+          dbreqs.push(insertView(msg.MessageAttributes.HostId.StringValue, msg.MessageAttributes.ListingId.StringValue));
       });  
       await Promise.all(dbreqs);
       console.timeEnd('process batch');

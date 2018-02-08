@@ -40,6 +40,26 @@ app.post('/pageview', async(req, res) => {
   }
 });
 
+//get all view data per date 
+app.get('/allviews/:date', async (req, res) => {
+    if (req.params.date) {
+        let results = await db.getViewByDate(req.params.date);
+        res.status(200).send(results);
+    } else {
+        res.status(404).send('Not Found')
+    }
+})
+
+//get all booking data per date 
+app.get('/allbookings/:date', async (req, res) => {
+    if (req.params.date) {
+        let results = await db.getBookByDate(req.params.date);
+        res.status(200).send(results);
+    } else {
+        res.status(404).send('Not Found')
+    }
+})
+
 //get event data by host + date
 app.get('/view/:hostId/:date', async (req, res) => {
     if (req.params.hostId && req.params.date) {
