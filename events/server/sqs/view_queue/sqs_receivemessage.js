@@ -1,15 +1,15 @@
 const newrelic = require('newrelic');
 //post function
-var insertView = require('../../../database/viewInsertion');
+const insertView = require('../../../database/viewInsertion');
 
 //config
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 AWS.config.update({ region: 'us-west-1'});
-var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
-var queueURL = 'https://sqs.us-west-1.amazonaws.com/608151570921/viewQ';
+const queueURL = 'https://sqs.us-west-1.amazonaws.com/608151570921/viewQ';
 
-var params = {
+const params = {
   AttributeNames: [
     'SentTimestamp'
   ],
@@ -22,9 +22,36 @@ var params = {
   WaitTimeSeconds: 10
 };
 
-var counter = 0;
+const counter = 0;
 
-var receiveMessageLoop = function() {
+const receiveMessage = (cb) => {
+  sqs.receiveMessage(params, async (err, data) => {
+    if (err) {
+      console.log('error receiving message...')
+    } else if (data.Messages) {
+      var deleteParams = {
+        Entries: [],
+        QueueUrl: queueURL
+      };
+      //array of db promises
+      let promises = [];
+      data.Messages.forEach((msg, i) => {
+        deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
+        promises.push(insertView(msg.MessageAttributes.ListingId.StringValue, msg.MessageAttributes.HostId.StringValue).saveAsync());
+      });
+      await Promise.all(promises);
+      sqs.deleteMessageBatch(deleteParams, function (err, data) {
+        if (err) {
+          console.log(err, err.stack);
+        } else {
+          cb(data.Messages.length);
+        }
+      });
+    } 
+  });
+}
+
+const receiveMessageLoop = () => {
   sqs.receiveMessage(params, async (err, data) => {
     if (err) {
       console.log('error receiving message...')
@@ -36,7 +63,7 @@ var receiveMessageLoop = function() {
       };  
       console.log('inserting ✉ ', counter += data.Messages.length);
       //array of db promises
-      var dbreqs = [];
+      let dbreqs = [];
       data.Messages.forEach((msg, i) => {
           deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
           dbreqs.push(insertView(msg.MessageAttributes.ListingId.StringValue, msg.MessageAttributes.HostId.StringValue).saveAsync());
@@ -59,6 +86,7 @@ var receiveMessageLoop = function() {
   });
 };
 
-receiveMessageLoop();
-
-module.exports = receiveMessageLoop;
+module.exports = {
+  receiveMessage,
+  receiveMessageLoop
+}

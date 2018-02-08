@@ -5,10 +5,17 @@ var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 var params = {};
 
-sqs.listQueues(params, function (err, data) {
-  if (err) {
-    console.log('Error', err);
-  } else {
-    console.log('Success', data.QueueUrls);
-  }
-});
+module.exports = () => {
+  return new Promise((resolve, reject) => {
+    sqs.listQueues(params, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (process.env.NODE_ENV !== 'test') {
+          console.log('Success', data.QueueUrls);          
+        }
+        resolve(data.QueueUrls);
+      }
+    });
+  })
+}

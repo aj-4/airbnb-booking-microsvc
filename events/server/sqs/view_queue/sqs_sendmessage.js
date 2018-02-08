@@ -6,7 +6,7 @@ var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 var params = {};
 var counter = 0;
 
-var sendMsg = function(listingId, hostId) {
+var sendMsg = function(listingId, hostId, cb) {
   var params = {
     DelaySeconds: 0,
     MessageAttributes: {
@@ -22,12 +22,18 @@ var sendMsg = function(listingId, hostId) {
     MessageBody: 'View',
     QueueUrl: 'https://sqs.us-west-1.amazonaws.com/608151570921/viewQ'
   };
-  sqs.sendMessage(params, function (err, data) {
+  return sqs.sendMessage(params, (err, data) => {
     if (err) {
+      if (cb) {
+        cb(false);
+      }
       console.log('Error', err);
     } else {
-      // console.log('Added to Queue, Id: ', data.MessageId);
-      console.log('sent msg ☄ ', ++counter);
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('sent msg ☄ ', ++counter);        
+      } else {
+        cb(true);        
+      }
     }
   });
 };
