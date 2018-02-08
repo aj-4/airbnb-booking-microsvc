@@ -4,7 +4,9 @@
 const dateHelper = require('./helpers/dateHelpers');
 const getConversionForDay = require('./helpers/crThisDate');
 
-const crDateRange = (hostId, dateStringStart, dateStringEnd) => {
+const crDateRange = async (dateStringStart, dateStringEnd, hostId) => {
+    const server = await require('../server/index');
+
     //parse dates for manipulation
     let startDate = { day: Number(dateStringStart.slice(4, 6)), month: dateStringStart.slice(0, 3), year: dateStringStart.slice(-4)};
     let endDate = { day: Number(dateStringEnd.slice(4, 6)), month: dateStringEnd.slice(0, 3), year: dateStringEnd.slice(-4) };
@@ -36,12 +38,21 @@ const crDateRange = (hostId, dateStringStart, dateStringEnd) => {
 
     // returns object with data for each day
     const conversionRates = allDays.map( (day, i) => {
-        return getConversionForDay(hostId, day);
+        if (hostId) {
+            return getConversionForDay(day, hostId);            
+        } else {
+            return getConversionForDay(day);
+        }
     })
 
     return Promise.all(conversionRates);
 }
 
-crDateRange(4195, 'Jan 06 2018', 'Feb 08 2018').then(crs => {
-    console.log(crs)
+//test
+crDateRange('Feb 08 2018', 'Feb 08 2018', 307).then(crs => {
+    console.log('for host 307', crs)
 });
+
+crDateRange('Feb 08 2018', 'Feb 08 2018').then(res => {
+    console.log('all bookings coversion', res);
+})
