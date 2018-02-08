@@ -2,7 +2,7 @@ var models = require('./indexCassandra');
 
 var getViews = (hostId, dateString) => {
     return new Promise(function (resolve, reject) {
-        models.instance.viewevent.find({ host_id: hostId, date: dateString, $limit: 10 }, function (err, records) {
+        models.instance.viewevent.find({ host_id: hostId, date: dateString }, function (err, records) {
             if (err) {
                 reject(err);
             } else {
