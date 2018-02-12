@@ -24,6 +24,7 @@ module.exports = async (date, hostId) => {
         const cr = bookCount ? bookCount / viewCount : 0;
         //return
         return {
+            host: hostId,
             date: date,
             views: viewCount,
             bookings: bookCount,
