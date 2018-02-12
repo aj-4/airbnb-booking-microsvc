@@ -59,7 +59,7 @@ var BookEventByDate = models.loadSchema('bookeventdate', {
 
 var ViewEventByDate = models.loadSchema('vieweventdate', {
   fields: {
-    booking_id: 'uuid',
+    view_id: 'uuid',
     host_id: 'text',
     listing_id: 'text',
     date: 'text',
