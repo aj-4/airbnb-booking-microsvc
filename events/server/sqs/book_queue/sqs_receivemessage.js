@@ -1,10 +1,23 @@
-//post function
-var insertBook = require('../../../database/bookInsertion');
+const API_KEY = require('./hg_api');
+const cassandra = require('./db/indexCassandra');
+const insertBook = require('./db/bookInsertion');
+
+//track stats
+const statsD = require('node-statsd');
+const statsDClient = new statsD({
+  host: 'statsd.hostedgraphite.com',
+  port: 8125,
+  prefix: API_KEY
+});
 
 //config
-var AWS = require('aws-sdk');
-AWS.config.update({ region: 'us-west-1'});
-var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+const AWS = require('aws-sdk');
+AWS.config.update({
+  region: 'us-west-1'
+});
+const sqs = new AWS.SQS({
+  apiVersion: '2012-11-05'
+});
 
 var queueURL = 'https://sqs.us-west-1.amazonaws.com/608151570921/bookingQ';
 
@@ -35,7 +48,10 @@ const receiveMessage = (cb) => {
       //array of db promises
       let promises = [];
       data.Messages.forEach((msg, i) => {
-        deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
+        deleteParams.Entries.push({
+          Id: msg.MessageId,
+          ReceiptHandle: msg.ReceiptHandle
+        });
         promises.push(insertBook(msg.MessageAttributes.HostId.StringValue, msg.MessageAttributes.ListingId.StringValue));
       });
       await Promise.all(promises);
@@ -51,11 +67,13 @@ const receiveMessage = (cb) => {
 }
 
 const receiveMessageLoop = () => {
+  let totalLatencyBegin = Date.now();
   sqs.receiveMessage(params, async (err, data) => {
     if (err) {
       console.log('error receiving message...')
     } else if (data.Messages) {
-      console.time('process batch')
+      statsDClient.timing('.q.book.latency.sqspull', Date.now() - totalLatencyBegin, 0.25);
+      let batchLatencyBegin = Date.now();
       var deleteParams = {
         Entries: [],
         QueueUrl: queueURL
@@ -64,17 +82,21 @@ const receiveMessageLoop = () => {
       //array of db promises
       let dbreqs = [];
       data.Messages.forEach((msg, i) => {
-        deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
+        deleteParams.Entries.push({
+          Id: msg.MessageId,
+          ReceiptHandle: msg.ReceiptHandle
+        });
         dbreqs.push(insertBook(msg.MessageAttributes.HostId.StringValue, msg.MessageAttributes.ListingId.StringValue));
       });
       await Promise.all(dbreqs);
-      console.timeEnd('process batch');
-      console.time('delete batch');
+      statsDClient.increment('.q.book.throughput', dbreqs.length, 0.25);
+      statsDClient.timing('.q.book.latency.batch', Date.now() - batchLatencyBegin, 0.25);
       sqs.deleteMessageBatch(deleteParams, function (err, data) {
         if (err) {
           console.log(err, err.stack);
         } else {
-          console.timeEnd('delete batch');
+          statsDClient.timing('.q.book.latency.delete', Date.now() - deleteLatencyBegin, 0.25);
+          statsDClient.timing('.q.book.latency.total', Date.now() - totalLatencyBegin, 0.25);
           receiveMessageLoop();
         }
       });

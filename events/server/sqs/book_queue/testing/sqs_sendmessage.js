@@ -4,34 +4,36 @@ AWS.config.update({ region: 'us-west-1' });
 var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 var params = {};
+var counter = 0;
 
-var sendMsg = function(hostId, listingId) {
+var sendMsg = function (listingId, hostId, cb) {
   var params = {
-    DelaySeconds: 1,
+    DelaySeconds: 0,
     MessageAttributes: {
-      'HostId': {
-        DataType: 'String',
-        StringValue: hostId
-      },
       'ListingId': {
         DataType: 'String',
         StringValue: listingId
       },
-      // 'SuperhostStatus' : {
-      //   DataType: 'String',
-      //   StringValue: hostId
-      // }
+      'HostId': {
+        DataType: 'String',
+        StringValue: hostId
+      }
     },
-    MessageBody: 'Booking',
+    MessageBody: 'View',
     QueueUrl: 'https://sqs.us-west-1.amazonaws.com/608151570921/bookingQ'
   };
-  sqs.sendMessage(params, function (err, data) {
+  return sqs.sendMessage(params, (err, data) => {
     if (err) {
-      console.log('Error', err);
+      throw new Error('send failed');
     } else {
-      console.log('Added to Queue, Id: ', data.MessageId);
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('sent book msg ☄ ', ++counter);
+      } else {
+        cb(true);
+      }
     }
   });
 };
+
 
 module.exports = sendMsg;
