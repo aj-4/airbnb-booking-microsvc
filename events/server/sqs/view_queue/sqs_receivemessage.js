@@ -1,5 +1,16 @@
+const API_KEY = require('../hg_api');
+const cassandra = require('./db/indexCassandra');
+const insertView = require('./db/viewInsertion');
+
+//track stats
+const statsD = require('node-statsd');
+const statsDClient = new statsD({
+  host: 'statsd.hostedgraphite.com',
+  port: 8125,
+  prefix: API_KEY
+});
+
 //post function
-const insertView = require('../../../database/viewInsertion');
 
 //config
 const AWS = require('aws-sdk');
@@ -51,30 +62,34 @@ const receiveMessage = (cb) => {
 }
 
 const receiveMessageLoop = () => {
+  let totalLatencyBegin = Date.now();
   sqs.receiveMessage(params, async (err, data) => {
     if (err) {
       console.log('error receiving message...')
     } else if (data.Messages) {
-      console.time('process batch')
+      statsDClient.timing('q.view.latency.sqspull', Date.now() - totalLatencyBegin, 0.25);
+      let batchLatencyBegin = Date.now();
       var deleteParams = {
         Entries: [],
         QueueUrl: queueURL
       };  
       console.log('inserting ✉ ', counter += data.Messages.length);
-      //array of db promises
+      //array of timing promises
       let dbreqs = [];
       data.Messages.forEach((msg, i) => {
           deleteParams.Entries.push({ Id: msg.MessageId, ReceiptHandle: msg.ReceiptHandle });
           dbreqs.push(insertView(msg.MessageAttributes.HostId.StringValue, msg.MessageAttributes.ListingId.StringValue));
       });  
       await Promise.all(dbreqs);
-      console.timeEnd('process batch');
-      console.time('delete batch');
+      statsDClient.increment('.q.view.throughput', dbreqs.length, 0.25);                
+      statsDClient.timing('.q.view.latency.batch', Date.now() - batchLatencyBegin, 0.25);
+      let deleteLatencyBegin = Date.now();
       sqs.deleteMessageBatch(deleteParams, function (err, data) {
         if (err) {
           console.log(err, err.stack);
         } else {
-          console.timeEnd('delete batch');          
+          statsDClient.timing('.q.view.latency.delete', Date.now() - deleteLatencyBegin, 0.25);
+          statsDClient.timing('.q.view.latency.total', Date.now() - totalLatencyBegin, 0.25);
           receiveMessageLoop();
         }
       });  

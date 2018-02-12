@@ -1,0 +1,25 @@
+{
+    "name": "view_worker",
+    "version": "1.0.0",
+    "description": "view handler",
+    "main": "receiveViewLoop.js",
+    "scripts": {
+        "start": "node server/index.js",
+        "viewloop": "node receiveViewLoop.js"
+    },
+    "author": "Aaron Pietsch",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/aj-4/AirbnbBookingSystem/issues"
+    },
+    "homepage": "https://github.com/aj-4/AirbnbBookingSystem#readme",
+    "dependencies": {
+        "appmetrics-statsd": "^2.0.0",
+        "aws-sdk": "^2.188.0",
+        "body-parser": "^1.18.2",
+        "express": "^4.16.2",
+        "express-cassandra": "^2.1.1",
+        "node-statsd": "^0.1.1",
+        "pg": "^7.4.1"
+    }
+}
