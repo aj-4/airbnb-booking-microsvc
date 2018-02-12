@@ -4,9 +4,11 @@
   "description": "request handler for bookings and views",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/mocha",
+    "test": "nyc mocha test/mocha",
     "start": "node server/index.js",
-    "newrelic": "npm install newrelic --no-optional --python=python2.7"
+    "newrelic": "npm install newrelic --no-optional --python=python2.7",
+    "receivebook": "node server/sqs/book_queue/sqs_receivemessage.js",
+    "receiveview": "node server/sqs/receiveViewLoop.js"
   },
   "repository": {
     "type": "git",
@@ -34,6 +36,7 @@
     "faker": "^4.1.0",
     "morgan": "^1.9.0",
     "newrelic": "^2.7.0",
+    "node-statsd": "^0.1.1",
     "pg": "^7.4.1",
     "redis": "^2.8.0"
   },
