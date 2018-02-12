@@ -7,10 +7,11 @@ const helpers = require('./mochaHelpers');
 //server testing
 const db = require('../../database/index');
 
-const sendMsg = require('../../server/sqs/view_queue/sqs_sendmessage');
-const receiveMsg = require('../../server/sqs/view_queue/sqs_receivemessage');
+const sendViewMsg = require('../../server/sqs/view_queue/sqs_sendmessage');
+const receiveViewMsg = require('../../server/sqs/view_queue/sqs_receivemessage');
 
-//hide logs
+const sendBookMsg = require('../../server/sqs/book_queue/sqs_sendmessage');
+const receiveBookMsg = require('../../server/sqs/book_queue/sqs_receivemessage');
 
 describe('SQS', () => {
 
@@ -30,31 +31,65 @@ describe('SQS', () => {
 
     describe('Queue Interaction', () => {
 
-        it('should send a new message to the queue', async () => {
+        it('should send a new message to the view queue', async () => {
             let msg = helpers.generateDbEntry();
-            let prom = await sendMsg(msg.listingId, msg.hostId, bool => {
+            let prom = await sendViewMsg(msg.listingId, msg.hostId, bool => {
                 expect(bool).to.be.true;
             });
         })
-        it('should receive a batch of ten messages at once', async () => {
+        it('should send a new message to the booking queue', async () => {
+            let msg = helpers.generateDbEntry();
+            let prom = await sendBookMsg(msg.listingId, msg.hostId, bool => {
+                expect(bool).to.be.true;
+            });
+        })
+        it('should receive ten view messages at once', async () => {
             for (let i = 0; i < 10; i++) {
                 let msg = helpers.generateDbEntry();
-                sendMsg(msg.listingId, msg.hostId);
+                sendViewMsg(msg.listingId, msg.hostId);
                 inserted.push(msg);
             }
-            await receiveMsg.receiveMessage(num => {
+            await receiveViewMsg.receiveMessage(num => {
+                console.log('num is', num);
+                expect(num).to.be(10);
+            })
+        })
+        it('should receive ten book messages at once', async () => {
+            for (let i = 0; i < 10; i++) {
+                let msg = helpers.generateDbEntry();
+                sendViewMsg(msg.listingId, msg.hostId);
+                inserted.push(msg);
+            }
+            await receiveBookMsg.receiveMessage(num => {
                 console.log('num is', num);
                 expect(num).to.be(10);
             })
         })
     })
 
+    describe('Queue Workers', () => {
+        it('view message worker function should exist', () => {
+            expect(receiveViewMsg.receiveMessageLoop).to.be.a('function');
+        })
+        it('book message worker function should exist', () => {
+            expect(receiveBookMsg.receiveMessageLoop).to.be.a('function');
+        })
+    })
+
     describe('Database Interaction', () => {
-        it('should have inserted all messages to the db', async () => {
+        it('should have inserted all view messages to the db', async () => {
             let results = [];
             let promises = [];
             inserted.forEach((msg, i) => {
                 promises.push(db.getView(inserted[i].hostId, today).then(result => results.push(result)));
+            })
+            await Promise.all(promises);
+        })
+        it('should have inserted all booking messages to the db', async () => {
+            let results = [];
+            let promises = [];
+            inserted.forEach((msg, i) => {
+                promises.push(db.getBook(inserted[i].hostId, today).then(result => results.push(result)));
             })
             await Promise.all(promises);
         })
