@@ -91,6 +91,7 @@ const receiveMessageLoop = () => {
       await Promise.all(dbreqs);
       statsDClient.increment('.q.book.throughput', dbreqs.length, 0.25);
       statsDClient.timing('.q.book.latency.batch', Date.now() - batchLatencyBegin, 0.25);
+      let deleteLatencyBegin = Date.now();
       sqs.deleteMessageBatch(deleteParams, function (err, data) {
         if (err) {
           console.log(err, err.stack);

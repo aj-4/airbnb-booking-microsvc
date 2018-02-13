@@ -1,5 +1,3 @@
-const newrelic = require('newrelic');
-
 //Express Config
 const express = require('express');
 const app = express();
