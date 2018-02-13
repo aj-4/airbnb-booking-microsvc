@@ -1,4 +1,5 @@
 var models = require('./indexCassandra');
+const PRIVATE_IP = process.env.PRIVATE_IP || '127.0.0.1';
 
 var addView = async (hostId, listingId, date) => {
   // return new models.instance.vieweventdate({
