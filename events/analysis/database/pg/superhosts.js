@@ -1,7 +1,7 @@
 //open connection to read slavez
 const { Pool, Client } = require('pg');
-const connection = process.env.DATABASE_URL ?
-    { connectionString: process.env.DATABASE_URL } :
+const connection = process.env.POSTGRES_IP ?
+    { connectionString: process.env.POSTGRES_IP } :
     { host: 'localhost', database: 'superhosts' }
 const pool = new Pool(connection)
 pool.connect();

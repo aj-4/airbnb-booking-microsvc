@@ -1,24 +1,24 @@
-var models = require('./indexCassandra');
+var models = require('./iCassandraView');
 
-var addBooking = async (hostId, listingId, date) => {
-  let promises = [];
+var addView = async (hostId, listingId, date) => {
+  let promiseArr = [];
   let uuid = models.uuid();
-  promises.push(new models.instance.bookevent({
-    booking_id: uuid,
+  promiseArr.push(new models.instance.vieweventdate({
+    view_id: uuid,
     host_id: hostId,
     listing_id: listingId,
     date: date ? Date(date).slice(4, 15) : Date().slice(4, 15),
     time: date ? new Date(date) : new Date()
   }).saveAsync());
-  promises.push(new models.instance.bookeventdate({
-    booking_id: uuid,
+  promiseArr.push(new models.instance.viewevent({
+    view_id: uuid,
     host_id: hostId,
     listing_id: listingId,
     date: date ? Date(date).slice(4, 15) : Date().slice(4, 15),
     time: date ? new Date(date) : new Date()
   }).saveAsync());
 
-  return Promise.all(promises);
+  return Promise.all(promiseArr);
 };
 
-module.exports = addBooking;
+module.exports = addView;

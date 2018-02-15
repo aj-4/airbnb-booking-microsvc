@@ -8,8 +8,8 @@ const morgan = require('morgan');
 const db = require('../database/index');
 
 //Queue helper functions
-const sqs = require('./sqs/queues');
-const sendViewMsg = require('./sqs/view_queue/sqs_sendmessage');
+// const sqs = require('./sqs/queues');
+// const sendViewMsg = require('./sqs/view_queue/sqs_sendmessage');
 
 //Postgres
 const pg = require('../database/pg/superhosts')
@@ -22,9 +22,9 @@ const redisCl = redis.createClient(REDIS_PORT);
 //Middleware
 app.use(bodyParser.json());
 //hide logs in test mode
-if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));    
-}
+// if (process.env.NODE_ENV !== 'test') {
+//     app.use(morgan('dev'));    
+// }
 
 app.get('/', (req, res) => res.send('Conversion Analysis'));
 

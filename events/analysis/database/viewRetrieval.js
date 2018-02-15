@@ -1,4 +1,4 @@
-var models = require('./indexCassandra');
+var models = require('./iCassandraView');
 
 var getViews = (hostId, dateString) => {
     return new Promise(function (resolve, reject) {

@@ -1,13 +1,16 @@
-const init = require('./indexCassandra');
+const initBook = require('./iCassandraBooking');
 const getBook = require('./bookRetrieval');
-const getView = require('./viewRetrieval');
 const addBook = require('./bookInsertion');
-const addView = require('./viewInsertion');
 const getBookByDate = require('./bookByDateRetrieval');
+
+const initView = require('./iCassandraView');
+const addView = require('./viewInsertion');
+const getView = require('./viewRetrieval');
 const getViewByDate = require('./viewByDateRetrieval');
 
 module.exports = {
-    init,
+    initBook,
+    initView,
     getBook,
     getView,
     addBook,

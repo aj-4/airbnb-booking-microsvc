@@ -3,7 +3,7 @@
 
 const dateHelper = require('./helpers/dateHelpers');
 const getConversionForDay = require('./helpers/crThisDate');
-const server = require('../server/index');
+const server = require('./server/index');
 
 const crDateRange = async (dateStringStart, dateStringEnd, hostId) => {
 
@@ -50,11 +50,11 @@ const crDateRange = async (dateStringStart, dateStringEnd, hostId) => {
 
 module.exports = crDateRange;
 
-//test
-// crDateRange('Feb 08 2018', 'Feb 08 2018', 307).then(crs => {
-//     console.log('for host 307', crs)
-// });
+// test
+crDateRange('Feb 08 2018', 'Feb 08 2018', 307).then(crs => {
+    console.log('for host 307', crs)
+});
 
-// crDateRange('Feb 08 2018', 'Feb 08 2018').then(res => {
-//     console.log('all bookings coversion', res);
-// })
+crDateRange('Feb 08 2018', 'Feb 08 2018').then(res => {
+    console.log('all bookings coversion', res);
+})

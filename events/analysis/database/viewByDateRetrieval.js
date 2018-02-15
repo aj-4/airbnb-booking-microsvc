@@ -1,4 +1,4 @@
-var models = require('./indexCassandra');
+var models = require('./iCassandraView');
 
 const getViewsByDate = (dateString) => {
     return new Promise((resolve, reject) => {

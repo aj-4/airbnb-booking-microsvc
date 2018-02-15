@@ -1,4 +1,4 @@
-var models = require('./indexCassandra');
+var models = require('./iCassandraBooking');
 
 var getBookingsByDate = (dateString) => {
     return new Promise(function (resolve, reject) {

@@ -1,9 +1,9 @@
 var ExpressCassandra = require('express-cassandra');
+const CASSANDRA_BOOKING_IP = process.env.CASSANDRA_BOOKING_IP || '127.0.0.1';
 
 var models = ExpressCassandra.createClient({
   clientOptions: {
-    // contactPoints: ['172.18.0.2'],
-    contactPoints: ['127.0.0.1'],
+    contactPoints: [CASSANDRA_BOOKING_IP],
     protocolOptions: { port: 9042 },
     keyspace: 'events',
     queryOptions: { consistency: ExpressCassandra.consistencies.one }
