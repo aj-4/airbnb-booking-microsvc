@@ -51,10 +51,10 @@ const crDateRange = async (dateStringStart, dateStringEnd, hostId) => {
 module.exports = crDateRange;
 
 // test
-crDateRange('Feb 08 2018', 'Feb 08 2018', 307).then(crs => {
-    console.log('for host 307', crs)
-});
+//crDateRange('Feb 08 2018', 'Feb 08 2018', 307).then(crs => {
+//    console.log('for host 307', crs)
+//});
 
-crDateRange('Feb 08 2018', 'Feb 08 2018').then(res => {
-    console.log('all bookings coversion', res);
-})
+//crDateRange('Feb 08 2018', 'Feb 08 2018').then(res => {
+//    console.log('all bookings coversion', res);
+//})
