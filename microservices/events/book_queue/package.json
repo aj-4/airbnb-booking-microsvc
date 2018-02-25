@@ -4,8 +4,8 @@
     "description": "view handler",
     "main": "receiveBookLoop.js",
     "scripts": {
-        "start": "node receiveBookLoop.js",
-        "bookloop": "node receiveBookLoop.js"
+        "start": "node bookWorker.js",
+        "bookloop": "node bookWorker.js"
     },
     "author": "Aaron Pietsch",
     "license": "ISC",
