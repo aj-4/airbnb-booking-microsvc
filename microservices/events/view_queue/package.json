@@ -2,10 +2,10 @@
     "name": "view_worker",
     "version": "1.0.0",
     "description": "view handler",
-    "main": "receiveViewLoop.js",
+    "main": "viewWorker.js",
     "scripts": {
         "start": "node server/index.js",
-        "viewloop": "node receiveViewLoop.js"
+        "viewloop": "node viewWorker.js"
     },
     "author": "Aaron Pietsch",
     "license": "ISC",
