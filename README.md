@@ -9,3 +9,6 @@ w/o latency spikes.
 
 ### System Architecture:
 ![Imgur](https://i.imgur.com/Z6UltiO.png)
+
+### Sample Testing:
+![Imgur](https://imgur.com/a/057o8.png)
