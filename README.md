@@ -11,4 +11,4 @@ w/o latency spikes.
 ![Imgur](https://i.imgur.com/Z6UltiO.png)
 
 ### Sample Testing:
-![Imgur](https://imgur.com/a/057o8.png)
+![Imgur](https://i.imgur.com/dJZ26TN.png)
